@@ -19,6 +19,7 @@ find_package(glfw3 REQUIRED)
 set(SOURCES 
     src/main.cpp
     external/GLAD/glad.c
+    src/Grid.cpp
 )
 
 # headers

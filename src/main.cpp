@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "../external/shader_s.h"
+#include "Grid.hpp"
 
 // initializations
 void processInput(GLFWwindow* window);
@@ -89,7 +90,14 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-    std::cout << "1";
+
+    Grid gameGrid;
+    bool success = gameGrid.loadFromFile("./assets/levels/level1.txt");
+    if(!success)
+    {
+        std::cerr << "Failed to load game grid from file." << std::endl;
+    }
+
     glEnable(GL_DEPTH_TEST);
     Shader ourShader("./shaders/shader.vs", "./shaders/shader.fs");
 
@@ -117,12 +125,10 @@ int main()
 
     while(!glfwWindowShouldClose(window))
     {   
-        std::cout << "2";
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ourShader.use();
-        std::cout << "3";
         
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
