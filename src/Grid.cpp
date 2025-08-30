@@ -52,3 +52,13 @@ bool Grid::loadFromFile(const std::string& path)
     }
     return true;
 }
+
+Tile Grid::getTile(int x, int y)
+{
+    if(x < 0 || x >= width || y < 0 || y >= height)
+    {
+        std::cerr << "Invalid tile coordinates: (" << x << ", " << y << ")\n";
+        return Tile::Empty;
+    }
+    return tiles[y*width+x];
+}

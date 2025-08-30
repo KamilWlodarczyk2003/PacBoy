@@ -1,7 +1,8 @@
 # PacBoy 🟡👾  
 
 **PacBoy** is a 3D game inspired by the classic **Pac-Man**, developed in **C++17** using **Modern OpenGL (3.3 Core)**.  
-The project is educational in nature – the goal is to build a simple 3D game engine with rendering, basic AI, and clean architecture.  
+The project is educational in nature – the goal is to build a simple 3D game engine with rendering, basic AI, and clean architecture.
+⚡ **Currently in progress** – new features are being added step by step.  
 
 ---
 

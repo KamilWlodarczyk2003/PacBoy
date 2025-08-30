@@ -16,6 +16,7 @@ class Grid
 {
 public:
     bool loadFromFile(const std::string& path);
+    Tile getTile(int x, int y);
 private:
     std::vector<Tile> tiles;
     int width;

@@ -3,15 +3,33 @@
 #include <iostream>
 #include <fstream>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "../external/shader_s.h"
+#include "../external/camera.h"
 #include "Grid.hpp"
 
 // initializations
 void processInput(GLFWwindow* window);
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 //settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+bool test = true;
+
+// Camera
+Camera camera(glm::vec3(0.0f, 5.0f, 10.0f)); 
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
+bool firstMouse = true;
+
+// timing
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 void checkFileExists(const std::string& path) {
     std::ifstream file(path);
@@ -22,8 +40,11 @@ void checkFileExists(const std::string& path) {
     }
 }
 
+
+
 int main()
 {
+
 
     std::cout << "0";
 
@@ -84,24 +105,31 @@ int main()
     }
 
     glfwMakeContextCurrent(window);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+    // Initialize GLAD
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
+    // Load game grid
     Grid gameGrid;
     bool success = gameGrid.loadFromFile("./assets/levels/level1.txt");
     if(!success)
     {
         std::cerr << "Failed to load game grid from file." << std::endl;
     }
-
-    glEnable(GL_DEPTH_TEST);
+    
+    
+    // Create and compile our shader program
     Shader ourShader("./shaders/shader.vs", "./shaders/shader.fs");
+    glEnable(GL_DEPTH_TEST);    // Enable depth testing
 
-
+    // Set up vertex data (and buffer(s)) and configure vertex attributes
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -123,12 +151,35 @@ int main()
     //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(6 * sizeof(float)));
     //glEnableVertexAttribArray(2);
 
+    // Main loop
     while(!glfwWindowShouldClose(window))
     {   
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ourShader.use();
+
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+        glm::mat4 view = camera.GetViewMatrix();
+        int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        
+        // Ustawienie macierzy modelu
+        glm::mat4 model = glm::mat4(1.0f);
+        int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        int objectColorLoc = glGetUniformLocation(ourShader.ID, "objectColor");
+        glUniform3f(objectColorLoc, 1.0f, 0.1f, 0.1f);
+
         
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
@@ -150,4 +201,39 @@ void processInput(GLFWwindow* window)
     {
         glfwSetWindowShouldClose(window, true);
     }
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // odwrócone, ponieważ współrzędne Y idą od dołu do góry
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
