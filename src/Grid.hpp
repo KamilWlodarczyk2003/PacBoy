@@ -3,6 +3,9 @@
 #include <string>
 #include<glm/glm.hpp>
 
+// Forward declaration
+class Shader;
+
 enum class Tile {
     Empty,
     Wall,
@@ -17,6 +20,7 @@ class Grid
 public:
     bool loadFromFile(const std::string& path);
     Tile getTile(int x, int y);
+    void render(Shader& shader, unsigned int cubeVAO);
 private:
     std::vector<Tile> tiles;
     int width;

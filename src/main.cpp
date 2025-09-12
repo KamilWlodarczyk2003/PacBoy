@@ -172,17 +172,8 @@ int main()
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
         
-        // Ustawienie macierzy modelu
-        glm::mat4 model = glm::mat4(1.0f);
-        int modelLoc = glGetUniformLocation(ourShader.ID, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-        int objectColorLoc = glGetUniformLocation(ourShader.ID, "objectColor");
-        glUniform3f(objectColorLoc, 1.0f, 0.1f, 0.1f);
-
-        
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        // Renderowanie planszy gry
+        gameGrid.render(ourShader, VAO);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

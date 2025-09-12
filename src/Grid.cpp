@@ -1,6 +1,11 @@
 #include "Grid.hpp"
 #include <fstream>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "../external/GLAD/include/glad/glad.h"
+#include "../external/shader_s.h"
 
 bool Grid::loadFromFile(const std::string& path)
 {
@@ -61,4 +66,49 @@ Tile Grid::getTile(int x, int y)
         return Tile::Empty;
     }
     return tiles[y*width+x];
+}
+
+void Grid::render(Shader& shader, unsigned int cubeVAO)
+{
+    for(int y{}; y < height; y++)
+    {
+        for(int x = 0; x < width; x++)
+        {
+            Tile tile = getTile(x,y);
+            if (tile == Tile::Empty) continue;
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(x, 0.0f, y));
+
+            // Ustawienie macierzy modelu
+            int modelLoc = glGetUniformLocation(shader.ID, "model");
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+            // Ustawienie koloru w zależności od typu kafelka
+            int objectColorLoc = glGetUniformLocation(shader.ID, "objectColor");
+            switch (tile) {
+                case Tile::Wall:
+                    glUniform3f(objectColorLoc, 0.0f, 0.0f, 1.0f); // niebieski
+                    break;
+                case Tile::Pellet:
+                    glUniform3f(objectColorLoc, 1.0f, 1.0f, 0.0f); // żółty
+                    break;
+                case Tile::Energizer:
+                    glUniform3f(objectColorLoc, 1.0f, 0.0f, 1.0f); // fioletowy
+                    break;
+                case Tile::PacmanStart:
+                    glUniform3f(objectColorLoc, 1.0f, 1.0f, 1.0f); // biały
+                    break;
+                case Tile::GhostStart:
+                    glUniform3f(objectColorLoc, 1.0f, 0.0f, 0.0f); // czerwony
+                    break;
+                default:
+                    glUniform3f(objectColorLoc, 0.5f, 0.5f, 0.5f); // szary
+                    break;
+            }
+            
+            glBindVertexArray(cubeVAO);
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        }
+    }
 }
