@@ -83,6 +83,12 @@ glm::vec2 Grid::getPacmanStartPosition() const
     return pacmanStartPos;
 }
 
+void Grid::collectTile(int x, int y) {
+    if (x >= 0 && x < width && y >= 0 && y < height) {
+        tiles[y * width + x] = Tile::Empty;
+    }
+}
+
 void Grid::render(Shader& shader, unsigned int cubeVAO)
 {
     for(int y{}; y < height; y++)

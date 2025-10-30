@@ -16,7 +16,8 @@ public:
     void moveLeft();
     void moveRight();
 
-    bool tryMove(float deltaX, float deltaY, const Grid& grid);
+    bool tryMove(float deltaX, float deltaY, Grid& grid);
+    bool collectPellet(int x, int y, Grid& grid);
 
     // getters and setters
     glm::vec2 getPosition() const { return position; }
@@ -30,4 +31,6 @@ public:
 private:
     glm::vec2 position;  // Pozycja na gridzie
     glm::vec3 color;     // Kolor gracza
+
+    int score;
 };

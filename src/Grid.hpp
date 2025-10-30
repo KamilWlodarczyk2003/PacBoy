@@ -21,6 +21,7 @@ public:
     bool loadFromFile(const std::string& path);
     Tile getTile(int x, int y) const;
     void render(Shader& shader, unsigned int cubeVAO);
+    void collectTile(int x, int y);
     int getWidth() const;
     int getHeight() const;
     glm::vec2 getPacmanStartPosition() const;

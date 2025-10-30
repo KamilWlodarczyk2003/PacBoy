@@ -77,6 +77,7 @@ int main()
         -0.5f,  0.5f, -0.5f  // Top-left
     };
 
+    //box indices
     unsigned int indices[] = {
         // Front face
         0, 1, 2,

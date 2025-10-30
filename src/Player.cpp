@@ -5,11 +5,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Player::Player() : position(0.0f, 0.0f), color(1.0f, 1.0f, 0.0f) // yellow
+Player::Player() : position(0.0f, 0.0f), color(1.0f, 1.0f, 0.0f), score(0) // yellow
 {
 }
 
-Player::Player(float x, float y) : position(x, y), color(1.0f, 1.0f, 0.0f) // yellow
+Player::Player(float x, float y) : position(x, y), color(1.0f, 1.0f, 0.0f), score(0) // yellow
 {
 }
 
@@ -30,7 +30,25 @@ void Player::moveLeft()
     position.x -= 1.0f;
 }
 
-bool Player::tryMove(float deltaX, float deltaY, const Grid& grid)
+bool Player::collectPellet(int x, int y, Grid& grid)
+{
+    Tile tile = grid.getTile(x,y);
+    if(tile == Tile::Pellet)
+    {
+        score += 10;
+        grid.collectTile(x,y);
+        return true;
+    } else if(tile == Tile::Energizer)
+    {
+        score += 50;
+        grid.collectTile(x,y);
+        return true;
+    }
+    return false;
+    
+}
+
+bool Player::tryMove(float deltaX, float deltaY, Grid& grid)
 {
     std::cout << "Trying to move from (" << position.x << ", " << position.y << ") by (" << deltaX << ", " << deltaY << ")" << std::endl;
     
@@ -49,6 +67,11 @@ bool Player::tryMove(float deltaX, float deltaY, const Grid& grid)
     if (tileAtNewPos == Tile::Wall)
     {
         return false;
+    }
+
+    if(tileAtNewPos == Tile::Pellet || tileAtNewPos == Tile::Energizer)
+    {
+        collectPellet(newX, newY, grid);
     }
     
     // movement is possible
