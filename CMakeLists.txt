@@ -20,6 +20,7 @@ set(SOURCES
     src/main.cpp
     external/GLAD/glad.c
     src/Grid.cpp
+    src/Player.cpp
 )
 
 # headers

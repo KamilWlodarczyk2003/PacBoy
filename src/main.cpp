@@ -10,6 +10,7 @@
 #include "../external/shader_s.h"
 #include "../external/camera.h"
 #include "Grid.hpp"
+#include "Player.hpp"
 
 // initializations
 void processInput(GLFWwindow* window);
@@ -31,6 +32,15 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+// Game objects (global for input handling)
+Grid* gameGridPtr = nullptr;
+Player* playerPtr = nullptr;
+
+// Movement timing
+float lastMoveTime = 0.0f;
+const float MOVE_COOLDOWN = 0.2f; // 200ms between moves
+
+// Check if file exists
 void checkFileExists(const std::string& path) {
     std::ifstream file(path);
     if (!file) {
@@ -46,13 +56,13 @@ int main()
 {
 
 
-    std::cout << "0";
+    //std::cout << "0";
 
     checkFileExists("./shaders/shader.vs");
     checkFileExists("./shaders/shader.fs");
 
     
-
+    //box verts
     float vertices[] = {
         // Front face
         -0.5f, -0.5f,  0.5f, // Bottom-left
@@ -151,6 +161,17 @@ int main()
     //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(6 * sizeof(float)));
     //glEnableVertexAttribArray(2);
 
+
+    // Create player and set to starting position
+    Player player;
+    glm::vec2 pacmanStart = gameGrid.getPacmanStartPosition();
+    std::cout << "Pacman start position: " << pacmanStart.x << ", " << pacmanStart.y << std::endl;
+    player.setPosition(pacmanStart);
+    
+    // Set global pointers for input handling
+    gameGridPtr = &gameGrid;
+    playerPtr = &player;
+
     // Main loop
     while(!glfwWindowShouldClose(window))
     {   
@@ -174,6 +195,8 @@ int main()
         
         // Renderowanie planszy gry
         gameGrid.render(ourShader, VAO);
+        // Renderowanie gracza
+        player.render(ourShader, VAO);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -201,6 +224,30 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    // Ruch gracza (użyj innych klawiszy niż kamera)
+    if (playerPtr && gameGridPtr) {
+        float currentTime = glfwGetTime();
+        if (currentTime - lastMoveTime > MOVE_COOLDOWN) {
+            bool moved = false;
+            if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+                moved = playerPtr->tryMove(0.0f, -1.0f, *gameGridPtr);
+            }
+            else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+                moved = playerPtr->tryMove(0.0f, 1.0f, *gameGridPtr);
+            }
+            else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+                moved = playerPtr->tryMove(-1.0f, 0.0f, *gameGridPtr);
+            }
+            else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+                moved = playerPtr->tryMove(1.0f, 0.0f, *gameGridPtr);
+            }
+            
+            if (moved) {
+                lastMoveTime = currentTime;
+            }
+        }
+    }
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -216,7 +263,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     }
 
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // odwrócone, ponieważ współrzędne Y idą od dołu do góry
+    float yoffset = lastY - ypos; // reversed
 
     lastX = xpos;
     lastY = ypos;

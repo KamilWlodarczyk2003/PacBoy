@@ -19,8 +19,11 @@ class Grid
 {
 public:
     bool loadFromFile(const std::string& path);
-    Tile getTile(int x, int y);
+    Tile getTile(int x, int y) const;
     void render(Shader& shader, unsigned int cubeVAO);
+    int getWidth() const;
+    int getHeight() const;
+    glm::vec2 getPacmanStartPosition() const;
 private:
     std::vector<Tile> tiles;
     int width;

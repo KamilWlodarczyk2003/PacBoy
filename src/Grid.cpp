@@ -58,7 +58,17 @@ bool Grid::loadFromFile(const std::string& path)
     return true;
 }
 
-Tile Grid::getTile(int x, int y)
+int Grid::getWidth() const
+{
+    return width;
+}
+
+int Grid::getHeight() const
+{
+    return height;
+}
+
+Tile Grid::getTile(int x, int y) const
 {
     if(x < 0 || x >= width || y < 0 || y >= height)
     {
@@ -66,6 +76,11 @@ Tile Grid::getTile(int x, int y)
         return Tile::Empty;
     }
     return tiles[y*width+x];
+}
+
+glm::vec2 Grid::getPacmanStartPosition() const
+{
+    return pacmanStartPos;
 }
 
 void Grid::render(Shader& shader, unsigned int cubeVAO)
@@ -80,30 +95,30 @@ void Grid::render(Shader& shader, unsigned int cubeVAO)
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(x, 0.0f, y));
 
-            // Ustawienie macierzy modelu
+            // Set the model matrix
             int modelLoc = glGetUniformLocation(shader.ID, "model");
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-            // Ustawienie koloru w zależności od typu kafelka
+            // Set color based on tile type
             int objectColorLoc = glGetUniformLocation(shader.ID, "objectColor");
             switch (tile) {
                 case Tile::Wall:
-                    glUniform3f(objectColorLoc, 0.0f, 0.0f, 1.0f); // niebieski
+                    glUniform3f(objectColorLoc, 0.0f, 0.0f, 1.0f); // blue
                     break;
                 case Tile::Pellet:
-                    glUniform3f(objectColorLoc, 1.0f, 1.0f, 0.0f); // żółty
+                    glUniform3f(objectColorLoc, 1.0f, 1.0f, 0.0f); // yellow
                     break;
                 case Tile::Energizer:
-                    glUniform3f(objectColorLoc, 1.0f, 0.0f, 1.0f); // fioletowy
+                    glUniform3f(objectColorLoc, 1.0f, 0.0f, 1.0f); // purple
                     break;
                 case Tile::PacmanStart:
-                    glUniform3f(objectColorLoc, 1.0f, 1.0f, 1.0f); // biały
+                    glUniform3f(objectColorLoc, 1.0f, 1.0f, 1.0f); // white
                     break;
                 case Tile::GhostStart:
-                    glUniform3f(objectColorLoc, 1.0f, 0.0f, 0.0f); // czerwony
+                    glUniform3f(objectColorLoc, 1.0f, 0.0f, 0.0f); // red
                     break;
                 default:
-                    glUniform3f(objectColorLoc, 0.5f, 0.5f, 0.5f); // szary
+                    glUniform3f(objectColorLoc, 0.5f, 0.5f, 0.5f); // gray
                     break;
             }
             
