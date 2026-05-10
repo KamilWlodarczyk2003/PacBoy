@@ -5,11 +5,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Player::Player() : position(0.0f, 0.0f), color(1.0f, 1.0f, 0.0f), score(0) // yellow
+Player::Player() : position(0.0f, 0.0f), color(1.0f, 1.0f, 0.0f), score(0), visual_position(0.0f, 0.0f)
 {
 }
 
-Player::Player(float x, float y) : position(x, y), color(1.0f, 1.0f, 0.0f), score(0) // yellow
+Player::Player(float x, float y) : position(x, y), color(1.0f, 1.0f, 0.0f), score(0), visual_position(x, y)
 {
 }
 
@@ -48,55 +48,68 @@ bool Player::collectPellet(int x, int y, Grid& grid)
     
 }
 
-bool Player::tryMove(float deltaX, float deltaY, Grid& grid)
+bool Player::update(Grid& grid)
 {
-    std::cout << "Trying to move from (" << position.x << ", " << position.y << ") by (" << deltaX << ", " << deltaY << ")" << std::endl;
+    float fracX = visual_position.x - glm::floor(visual_position.x);
+    float fracY = visual_position.y - glm::floor(visual_position.y);
     
-    // new position
-    float newX = position.x + deltaX;
-    float newY = position.y + deltaY;
-    
-    // grid border
-    if (newX < 0 || newX >= grid.getWidth() || newY < 0 || newY >= grid.getHeight())
+    visual_position += curr_direction * SPEED;
+
+    if((fracX < 0.05f || fracX > 0.95f) && (fracY < 0.05f || fracY > 0.95f))
     {
-        return false;
-    }
-    
-    // wall colission
-    Tile tileAtNewPos = grid.getTile((int)newX, (int)newY);
-    if (tileAtNewPos == Tile::Wall)
-    {
-        return false;
+        collectPellet(round(visual_position.x), round(visual_position.y), grid);
+        std::cout <<"CHECKING"<<std::endl;
+        Tile new_pos_tile = grid.getTile(
+            glm::round(visual_position.x + curr_direction.x), 
+            glm::round(visual_position.y + curr_direction.y));
+
+        if(new_pos_tile == Tile::Wall)
+        {
+            curr_direction *= 0;
+        }else
+        {
+            new_pos_tile = grid.getTile(
+                glm::round(visual_position.x + target_direction.x), 
+                glm::round(visual_position.y + target_direction.y)
+            );
+            if(new_pos_tile != Tile::Wall)
+            {
+                curr_direction = target_direction;
+            }
+        }
     }
 
-    if(tileAtNewPos == Tile::Pellet || tileAtNewPos == Tile::Energizer)
-    {
-        collectPellet(newX, newY, grid);
-    }
-    
-    // movement is possible
-    position.x = newX;
-    position.y = newY;
-    std::cout << "Move successful! New position: (" << position.x << ", " << position.y << ")" << std::endl;
+    std::cout << "visual: (" << visual_position.x << ", " << visual_position.y << ") real: (" << position.x << ", " << position.y << ")" << std::endl;
+    std::cout << "curr: (" << curr_direction.x << ", " << curr_direction.y << ") target: (" << target_direction.x << ", " << target_direction.y << ")" << std::endl;
     return true;
+}
+
+void Player::setDirection(float deltaX, float deltaY)
+{
+    target_direction.x = deltaX;
+    target_direction.y = deltaY;
 }
 
 void Player::setPosition(float x, float y)
 {
     position.x = x;
     position.y = y;
+
+    visual_position.x = x;
+    visual_position.y = y;
 }
 
 void Player::setPosition(const glm::vec2& pos)
 {
     position = pos;
+    visual_position = pos;
 }
 
 void Player::render(Shader& shader, unsigned int cubeVAO)
 {
     // Utwórz macierz transformacji dla gracza
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(position.x, 0.1f, position.y)); // Lekko wyżej niż kafelki
+    model = glm::translate(model, glm::vec3(visual_position.x, 0.1f, visual_position.y)); // Lekko wyżej niż kafelki
     model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f)); // Trochę mniejszy niż kafelki
     
     // Wyślij macierz modelu do shadera

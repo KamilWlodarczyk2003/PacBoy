@@ -108,7 +108,7 @@ int main()
 
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "PacBoy", NULL, NULL);
 
-    if(window == NULL)
+    if(window == nullptr)
     {
         std::cout << "Failed to create GLFW window!" << std::endl;
         glfwTerminate();
@@ -197,6 +197,7 @@ int main()
         // Renderowanie planszy gry
         gameGrid.render(ourShader, VAO);
         // Renderowanie gracza
+        player.update(gameGrid);
         player.render(ourShader, VAO);
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -230,21 +231,20 @@ void processInput(GLFWwindow* window)
     if (playerPtr && gameGridPtr) {
         float currentTime = glfwGetTime();
         if (currentTime - lastMoveTime > MOVE_COOLDOWN) {
-            bool moved = false;
             if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-                moved = playerPtr->tryMove(0.0f, -1.0f, *gameGridPtr);
+                playerPtr->setDirection(0.0f, -1.0f);
             }
             else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-                moved = playerPtr->tryMove(0.0f, 1.0f, *gameGridPtr);
+                playerPtr->setDirection(0.0f, 1.0f);
             }
             else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-                moved = playerPtr->tryMove(-1.0f, 0.0f, *gameGridPtr);
+                playerPtr->setDirection(-1.0f, 0.0f);
             }
             else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-                moved = playerPtr->tryMove(1.0f, 0.0f, *gameGridPtr);
+                playerPtr->setDirection(1.0f, 0.0f);
             }
             
-            if (moved) {
+            if (playerPtr->getCurrentDirection() != glm::vec2(0.0f, 0.0f)) {
                 lastMoveTime = currentTime;
             }
         }

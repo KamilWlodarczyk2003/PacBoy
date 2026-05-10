@@ -8,6 +8,7 @@
 #include "../external/shader_s.h"
 
 bool Grid::loadFromFile(const std::string& path)
+//Loading txt file as a map
 {
     std::ifstream in(path);
     if(!in.is_open())
@@ -69,6 +70,7 @@ int Grid::getHeight() const
 }
 
 Tile Grid::getTile(int x, int y) const
+// Return the class of tile by given xy coordinates
 {
     if(x < 0 || x >= width || y < 0 || y >= height)
     {
@@ -84,6 +86,8 @@ glm::vec2 Grid::getPacmanStartPosition() const
 }
 
 void Grid::collectTile(int x, int y) {
+// clearing the tile
+
     if (x >= 0 && x < width && y >= 0 && y < height) {
         tiles[y * width + x] = Tile::Empty;
     }
