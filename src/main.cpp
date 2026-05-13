@@ -50,6 +50,8 @@ void checkFileExists(const std::string& path) {
     }
 }
 
+// Camera distance from the player
+const glm::vec3 CAMERA_OFFSET = glm::vec3(0.0f, 5.0f, 10.0f);
 
 
 int main()
@@ -179,8 +181,21 @@ int main()
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
+        
         processInput(window);
+        // setting up the camera
+        glm::vec3 playerPos = glm::vec3(playerPtr->getPosition().x, 0.0f, playerPtr->getPosition().y);
+        glm::vec2 playerDir = playerPtr->getCameraDirection();
+        glm::vec3 cameraOffset = CAMERA_OFFSET;
+
+        if (glm::length(playerDir) > 0.01f)
+        {
+            cameraOffset = glm::vec3(-playerDir.x, 0.0f, -playerDir.y) * glm::vec3(10.0f, 1.0f, 10.0f);
+            cameraOffset.y = 5.0f;
+        }
+        glm::vec3 targetCameraPos = playerPos + cameraOffset;
+        camera.Position = glm::mix(camera.Position, targetCameraPos, 0.1f);
+
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         ourShader.use();
@@ -189,7 +204,7 @@ int main()
         int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 view = glm::lookAt(camera.Position, playerPos, glm::vec3(0.0f, 1.0f, 0.0f));
         int viewLoc = glGetUniformLocation(ourShader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
@@ -227,21 +242,21 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
-    // Ruch gracza (użyj innych klawiszy niż kamera)
+    // Player movement
     if (playerPtr && gameGridPtr) {
         float currentTime = glfwGetTime();
         if (currentTime - lastMoveTime > MOVE_COOLDOWN) {
             if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-                playerPtr->setDirection(0.0f, -1.0f);
+                playerPtr->setDirection(Direction::Forward);
             }
             else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-                playerPtr->setDirection(0.0f, 1.0f);
+                playerPtr->setDirection(Direction::Back);
             }
             else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-                playerPtr->setDirection(-1.0f, 0.0f);
+                playerPtr->setDirection(Direction::Left);
             }
             else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-                playerPtr->setDirection(1.0f, 0.0f);
+                playerPtr->setDirection(Direction::Right);
             }
             
             if (playerPtr->getCurrentDirection() != glm::vec2(0.0f, 0.0f)) {
