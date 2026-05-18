@@ -38,8 +38,12 @@ Player* playerPtr = nullptr;
 
 // Movement timing
 float lastMoveTime = 0.0f;
-const float MOVE_COOLDOWN = 0.2f; // 200ms between moves
-
+const float MOVE_COOLDOWN = 0.05f; // 100ms between moves
+// Previous key states (for detecting key press vs hold)
+bool prevKeyUp = false;
+bool prevKeyDown = false;
+bool prevKeyLeft = false;
+bool prevKeyRight = false;
 // Check if file exists
 void checkFileExists(const std::string& path) {
     std::ifstream file(path);
@@ -246,22 +250,34 @@ void processInput(GLFWwindow* window)
     if (playerPtr && gameGridPtr) {
         float currentTime = glfwGetTime();
         if (currentTime - lastMoveTime > MOVE_COOLDOWN) {
-            if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+            bool keyUp = glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS;
+            bool keyDown = glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS;
+            bool keyLeft = glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS;
+            bool keyRight = glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS;
+
+            // Only execute on key press (transition from not pressed to pressed)
+            if (keyUp && !prevKeyUp) {
                 playerPtr->setDirection(Direction::Forward);
-            }
-            else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-                playerPtr->setDirection(Direction::Back);
-            }
-            else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-                playerPtr->setDirection(Direction::Left);
-            }
-            else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-                playerPtr->setDirection(Direction::Right);
-            }
-            
-            if (playerPtr->getCurrentDirection() != glm::vec2(0.0f, 0.0f)) {
                 lastMoveTime = currentTime;
             }
+            else if (keyDown && !prevKeyDown) {
+                playerPtr->setDirection(Direction::Back);
+                lastMoveTime = currentTime;
+            }
+            else if (keyLeft && !prevKeyLeft) {
+                playerPtr->setDirection(Direction::Left);
+                lastMoveTime = currentTime;
+            }
+            else if (keyRight && !prevKeyRight) {
+                playerPtr->setDirection(Direction::Right);
+                lastMoveTime = currentTime;
+            }
+
+            // Update previous states for next frame
+            prevKeyUp = keyUp;
+            prevKeyDown = keyDown;
+            prevKeyLeft = keyLeft;
+            prevKeyRight = keyRight;
         }
     }
 }
