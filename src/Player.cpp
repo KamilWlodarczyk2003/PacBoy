@@ -63,19 +63,28 @@ bool Player::collectPellet(int x, int y, Grid& grid)
 // setting player's direction considering current direction
 void Player::setDirection(Direction direct)
 {
+    // Snap camera_direction
+    glm::vec2 snapped_camera_dir = camera_direction;
+    if(glm::abs(snapped_camera_dir.x) > glm::abs(snapped_camera_dir.y))
+    {
+        snapped_camera_dir = glm::vec2(glm::sign(snapped_camera_dir.x), 0.0f);
+    } else {
+        snapped_camera_dir = glm::vec2(0.0f, glm::sign(snapped_camera_dir.y));
+    }
+    
     switch(direct)
     {
         case Direction::Forward:
-            target_direction = camera_direction;
+            target_direction = snapped_camera_dir;
             break;
         case Direction::Back:
-            target_direction = -camera_direction;
+            target_direction = -snapped_camera_dir;
             break;
         case Direction::Left:
-            target_direction = glm::vec2(camera_direction.y, -camera_direction.x);
+            target_direction = glm::vec2(snapped_camera_dir.y, -snapped_camera_dir.x);
             break;
         case Direction::Right:
-            target_direction = glm::vec2(-camera_direction.y, camera_direction.x);
+            target_direction = glm::vec2(-snapped_camera_dir.y, snapped_camera_dir.x);
             break;
     }
 }
@@ -85,9 +94,9 @@ bool Player::update(Grid& grid)
     float fracX = visual_position.x - glm::floor(visual_position.x);
     float fracY = visual_position.y - glm::floor(visual_position.y);
     
-    if(curr_direction != glm::vec2(0.0f, 0.0f))
+    if(curr_direction != glm::vec2(0.0f, 0.0f) && glm::length(curr_direction - camera_direction) > 0.01f)
     {
-        camera_direction = curr_direction;
+        camera_direction = glm::mix(camera_direction, curr_direction, 0.08f);
     }
 
     if((fracX < 0.07f || fracX > 0.93f) && (fracY < 0.07f || fracY > 0.93f))

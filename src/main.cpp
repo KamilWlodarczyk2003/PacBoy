@@ -198,7 +198,7 @@ int main()
             cameraOffset.y = 5.0f;
         }
         glm::vec3 targetCameraPos = playerPos + cameraOffset;
-        camera.Position = glm::mix(camera.Position, targetCameraPos, 0.1f);
+        camera.Position = glm::mix(camera.Position, targetCameraPos, 0.05f);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
