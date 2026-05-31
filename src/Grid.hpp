@@ -31,4 +31,5 @@ private:
     int height;
     glm::vec2 pacmanStartPos;
     std::vector<glm::vec2> ghostStartPos;
+    std::vector<std::string> lines;
 };

@@ -1,6 +1,7 @@
 #include "Grid.hpp"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -17,7 +18,6 @@ bool Grid::loadFromFile(const std::string& path)
         return false;
     }
 
-    std::vector<std::string> lines;
     std::string line;
 
     while(std::getline(in, line))
@@ -29,18 +29,19 @@ bool Grid::loadFromFile(const std::string& path)
 
     height = lines.size();
     width = lines[0].size();
-
-    tiles.resize(width*height);
+    
+    // Calculate maximum value of width
+    int maxWidth = 0;
+    for (const auto& l : lines) {
+        maxWidth = std::max(maxWidth, (int)l.size());
+    }
+    tiles.resize(maxWidth * height);
 
     for(int y{}; y < height; y++)
     {
-        if((int)lines[y].size() != width)
-        {
-            std::cerr << "Level is not rectangular at line " << y << "/n";
-            return false;
-        }
+        int rowWidth = lines[y].size();
 
-        for (int x=0; x<width; ++x) {
+        for (int x=0; x<rowWidth; ++x) {
             char c = lines[y][x];
             Tile t = Tile::Empty;
             switch(c) {
@@ -52,10 +53,14 @@ bool Grid::loadFromFile(const std::string& path)
                 case ' ': t=Tile::Empty; break;
                 default: std::cerr<<"Unknown char "<<c<<"\n"; break;
             }
-            tiles[y*width+x] = t;
+            tiles[y*maxWidth+x] = t;
         }
-
+        // Fill rest of row with Empty
+        for (int x = rowWidth; x < maxWidth; ++x) {
+            tiles[y*maxWidth+x] = Tile::Empty;
+        }
     }
+    width = maxWidth;
     return true;
 }
 
