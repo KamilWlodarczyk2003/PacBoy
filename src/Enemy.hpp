@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 
+class Player;
+
 enum class State
 {
     Chase,
@@ -27,4 +29,8 @@ public:
 
 private:
     Type type;
+    glm::vec2 target;
+    Player* player;
+    glm::vec2 scatter_target;
+    glm::vec2 position;
 };
