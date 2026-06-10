@@ -11,6 +11,7 @@
 #include "../external/camera.h"
 #include "Grid.hpp"
 #include "Player.hpp"
+#include "Enemy.hpp"
 
 // initializations
 void processInput(GLFWwindow* window);
