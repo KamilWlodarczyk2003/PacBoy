@@ -25,6 +25,7 @@ public:
     int getWidth() const;
     int getHeight() const;
     glm::vec2 getPacmanStartPosition() const;
+    std::vector<glm::vec2> possible_moves(glm::vec2 position);
 private:
     std::vector<Tile> tiles;
     int width;

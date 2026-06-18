@@ -142,3 +142,15 @@ void Grid::render(Shader& shader, unsigned int cubeVAO)
         }
     }
 }
+
+std::vector<glm::vec2> Grid::possible_moves(glm::vec2 position)
+{
+    std::vector<glm::vec2> result;
+
+    if(getTile(position.x, position.y + 1) != Tile::Wall) result.push_back({position.x, position.y + 1.0f});
+    if(getTile(position.x, position.y - 1) != Tile::Wall) result.push_back({position.x, position.y - 1.0f});
+    if(getTile(position.x - 1, position.y) != Tile::Wall) result.push_back({position.x - 1.0f, position.y});
+    if(getTile(position.x + 1, position.y) != Tile::Wall) result.push_back({position.x + 1.0f, position.y});
+
+    return result;
+}
