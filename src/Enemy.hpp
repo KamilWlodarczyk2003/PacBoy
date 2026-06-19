@@ -33,12 +33,12 @@ public:
     void set_red_ghost(Enemy* red_ghost_v);
     void set_grid(Grid* grid_v);
     void assign_scatter();
-    void update();
+    void update(float timer, int level);
     void calc_direction(glm::vec2 curr, glm::vec2 dest);
 
 private:
     Type type;
-    State state;
+    State state = State::Scatter;
 
     glm::vec2 target;
     glm::vec2 scatter_target;
@@ -48,6 +48,7 @@ private:
     glm::vec2 spawn_entrance;
 
     bool state_change = false;
+    int last_timer {-1};
 
     Enemy* red_ghost;
     Grid* grid;

@@ -78,8 +78,62 @@ glm::vec2 Enemy::find_target()
     }
 }
 
-void Enemy::update()
+void Enemy::update(float timer, int level)
 {
+    int currentSecond = static_cast<int>(timer);
+
+    if (currentSecond != last_timer)
+    {
+        last_timer = currentSecond;
+        if(level == 1)
+        {
+            if(currentSecond == 7 || currentSecond == 27 || currentSecond == 34 || currentSecond == 54 || currentSecond == 59 || currentSecond == 79 || currentSecond == 84)
+            {state_change = true;}
+
+
+            if(currentSecond == 27 || currentSecond == 54 || currentSecond == 79)
+            {
+                state = State::Scatter;
+            } 
+            else if(currentSecond == 7 || currentSecond == 34 || currentSecond == 59 || currentSecond == 84)
+            {
+                state = State::Chase;
+            }
+        }
+        else if(level >= 2 && level <= 4)
+        {
+            if(currentSecond == 7 || currentSecond == 27 || currentSecond == 34 || currentSecond == 54 || currentSecond == 59)
+            {state_change = true;}
+
+
+            if(currentSecond == 27 || currentSecond == 54)
+            {
+                state = State::Scatter;
+            } 
+            else if(currentSecond == 7 || currentSecond == 34 || currentSecond == 59)
+            {
+                state = State::Chase;
+            }
+        }
+        else if(level >= 5)
+        {
+            if(currentSecond == 5 || currentSecond == 25 || currentSecond == 30 || currentSecond == 50 || currentSecond == 55)
+            {state_change = true;}
+
+
+            if(currentSecond == 25 || currentSecond == 50)
+            {
+                state = State::Scatter;
+            } 
+            else if(currentSecond == 5 || currentSecond == 30 || currentSecond == 55)
+            {
+                state = State::Chase;
+            }
+        }
+    }
+
+
+    
     if(state == State::Scared)
     {
         if(state_change)
