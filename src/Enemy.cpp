@@ -76,6 +76,8 @@ glm::vec2 Enemy::find_target()
         glm::vec2 two_spaces = player_position + 2.0f * player->getCurrentDirection();
         target = 2.0f * two_spaces - red_ghost->get_position();
     }
+
+    return target;
 }
 
 void Enemy::update(float timer, int level)
@@ -133,7 +135,7 @@ void Enemy::update(float timer, int level)
     }
 
 
-    
+
     if(state == State::Scared)
     {
         if(state_change)

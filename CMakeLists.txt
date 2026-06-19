@@ -21,6 +21,7 @@ set(SOURCES
     external/GLAD/glad.c
     src/Grid.cpp
     src/Player.cpp
+    src/Enemy.cpp
 )
 
 # headers
