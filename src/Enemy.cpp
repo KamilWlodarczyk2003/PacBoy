@@ -172,7 +172,11 @@ void Enemy::update()
     }
     else if(state == State::Dead)
     {
-        if(position == spawn_entrance) target == spawn_point;
+        if(position == spawn_entrance) 
+        {
+            target == spawn_point;
+            calc_direction(position, target);
+        }
         else
         {
             target = spawn_entrance;
