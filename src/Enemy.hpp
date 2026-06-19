@@ -44,6 +44,8 @@ private:
     glm::vec2 scatter_target;
     glm::vec2 position;
     glm::vec2 direction;
+    glm::vec2 spawn_point;
+    glm::vec2 spawn_entrance;
 
     bool state_change = false;
 

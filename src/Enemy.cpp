@@ -115,6 +115,7 @@ void Enemy::update()
             state_change = false;
         } else
         {
+            find_target();
             std::vector<glm::vec2> possible_positions = grid->possible_moves(position);
 
             int best_val = INT_MAX;
@@ -138,6 +139,62 @@ void Enemy::update()
         }
         
     }
-}
+    else if(state == State::Scatter)
+    {
+        if(state_change)
+        {
+            direction *= -1.0f;
+            state_change = false;
+        }else
+        {
+            target = scatter_target;
+            std::vector<glm::vec2> possible_positions = grid->possible_moves(position);
 
+            int best_val = INT_MAX;
+            glm::vec2 next_move;
+
+            for(glm::vec2 pos : possible_positions)
+            {
+                if(pos != position * 1.0f)
+                {
+                    float dist = glm::distance(pos, target);
+
+                    if(dist < best_val)
+                    {
+                        best_val = dist;
+                        next_move = pos;
+                    }
+                }
+            }
+
+            calc_direction(position, next_move);
+        }
+    }
+    else if(state == State::Dead)
+    {
+        if(position == spawn_entrance) target == spawn_point;
+        else
+        {
+            target = spawn_entrance;
+            std::vector<glm::vec2> possible_positions = grid->possible_moves(position);
+
+            int best_val = INT_MAX;
+            glm::vec2 next_move;
+
+            for(glm::vec2 pos : possible_positions)
+            {
+
+                float dist = glm::distance(pos, target);
+
+                if(dist < best_val)
+                {
+                    best_val = dist;
+                    next_move = pos;
+                }
+            }
+            calc_direction(position, next_move);
+        }
+        
+    }
+}
 
