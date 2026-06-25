@@ -3,6 +3,7 @@
 #include "Grid.hpp"
 
 class Player;
+class Shader;
 
 enum class State
 {
@@ -35,6 +36,9 @@ public:
     void assign_scatter();
     void update(float timer, int level);
     void calc_direction(glm::vec2 curr, glm::vec2 dest);
+    void move();
+    void render(Shader& shader, unsigned int cubeVAO);
+    
 
 private:
     Type type;
@@ -46,6 +50,9 @@ private:
     glm::vec2 direction;
     glm::vec2 spawn_point;
     glm::vec2 spawn_entrance;
+    glm::vec3 color;
+
+    bool is_at_center(glm::vec2 pos);
 
     bool state_change = false;
     int last_timer {-1};
@@ -53,4 +60,6 @@ private:
     Enemy* red_ghost;
     Grid* grid;
     Player* player;
+
+    const float SPEED = 0.05;
 };

@@ -3,8 +3,11 @@
 
 #include <random>
 #include <algorithm>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "../external/shader_s.h"
 
-Enemy::Enemy(Type enemy_type) : type(enemy_type)
+Enemy::Enemy(Type enemy_type) : type(enemy_type), color(1.0f, 0.0f, 0.0f)
 {
     assign_scatter();
 }
@@ -21,7 +24,12 @@ void Enemy::set_grid(Grid* grid_v)
 
 void Enemy::calc_direction(glm::vec2 curr, glm::vec2 dest)
 {
-    direction = dest - curr;
+    glm::vec2 delta = dest - curr;
+
+    if (glm::length(delta) > 0.0f)
+        direction = glm::normalize(delta);
+    else
+        direction = glm::vec2(0.0f, 0.0f);
 }
 
 void Enemy::assign_scatter()
@@ -256,5 +264,38 @@ void Enemy::update(float timer, int level)
         }
         
     }
+
+    if (!is_at_center(position))
+    {
+        move();
+        return;
+    }
+
+    position = glm::round(position);
 }
 
+void Enemy::move()
+{
+    position = position + direction*SPEED;
+}
+
+void Enemy::render(Shader& shader, unsigned int cubeVAO)
+{
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(position.x, 0.1f, position.y)); // a bit higher than a floor
+    model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f)); // a bit smaller than a 1x1 cube
+
+    int modelLoc = glGetUniformLocation(shader.ID, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+    int objectColorLoc = glGetUniformLocation(shader.ID, "objectColor");
+    glUniform3f(objectColorLoc, color.r, color.g, color.b);
+
+    glBindVertexArray(cubeVAO);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+}
+
+bool Enemy::is_at_center(glm::vec2 pos)
+{
+    return glm::length(pos - glm::round(pos)) < 0.001f;
+}
