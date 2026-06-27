@@ -147,7 +147,12 @@ void Enemy::update(float timer, int level)
         }
     }
 
-
+    if (!is_at_center(position))
+    {
+        move();
+        return;
+    }
+    position = glm::round(position);
 
     if(state == State::Scared)
     {
@@ -270,13 +275,7 @@ void Enemy::update(float timer, int level)
         
     }
 
-    if (!is_at_center(position))
-    {
-        move();
-        return;
-    }
-
-    position = glm::round(position);
+    move();
 }
 
 void Enemy::move()
