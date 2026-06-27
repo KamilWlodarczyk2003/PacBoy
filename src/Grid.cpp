@@ -49,7 +49,7 @@ bool Grid::loadFromFile(const std::string& path)
                 case '.': t=Tile::Pellet; break;
                 case '*': t=Tile::Energizer; break;
                 case 'P': t=Tile::PacmanStart; pacmanStartPos={x,y}; break;
-                case 'G': t=Tile::GhostStart; ghostStartPos.push_back({x,y}); break;
+                case 'G': t=Tile::GhostStart; ghostStartPos={x,y}; break;
                 case ' ': t=Tile::Empty; break;
                 default: std::cerr<<"Unknown char "<<c<<"\n"; break;
             }
@@ -88,6 +88,11 @@ Tile Grid::getTile(int x, int y) const
 glm::vec2 Grid::getPacmanStartPosition() const
 {
     return pacmanStartPos;
+}
+
+glm::vec2 Grid::getGhostSpawnPosition() const
+{
+    return ghostStartPos;
 }
 
 void Grid::collectTile(int x, int y) {

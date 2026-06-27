@@ -25,12 +25,13 @@ public:
     int getWidth() const;
     int getHeight() const;
     glm::vec2 getPacmanStartPosition() const;
+    glm::vec2 getGhostSpawnPosition() const;
     std::vector<glm::vec2> possible_moves(glm::vec2 position);
 private:
     std::vector<Tile> tiles;
     int width;
     int height;
     glm::vec2 pacmanStartPos;
-    std::vector<glm::vec2> ghostStartPos;
+    glm::vec2 ghostStartPos;
     std::vector<std::string> lines;
 };

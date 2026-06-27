@@ -25,7 +25,7 @@ class Enemy
 {
 public:
 
-    Enemy(Type enemy_type);
+    Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos); 
 
     glm::vec2 find_target();
 

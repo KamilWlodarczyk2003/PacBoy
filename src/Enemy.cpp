@@ -7,7 +7,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../external/shader_s.h"
 
-Enemy::Enemy(Type enemy_type) : type(enemy_type), color(1.0f, 0.0f, 0.0f)
+Enemy::Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos) : 
+type(enemy_type), 
+color(1.0f, 0.0f, 0.0f),
+grid(grid_in),
+player(player_in),
+spawn_point(start_pos)
 {
     assign_scatter();
 }
@@ -238,7 +243,7 @@ void Enemy::update(float timer, int level)
     {
         if(position == spawn_entrance) 
         {
-            target == spawn_point;
+            target = spawn_point;
             calc_direction(position, target);
         }
         else
