@@ -27,7 +27,7 @@ Player::Player(float x, float y) :  position(x, y),
 
 void Player::moveUp()
 {
-    position.y -= 1.0f; // W gridzie y=0 to góra, więc moveUp zmniejsza y
+    position.y -= 1.0f; // Grid y=0 is the top row.
 }
 void Player::moveDown()
 {
@@ -60,10 +60,9 @@ bool Player::collectPellet(int x, int y, Grid& grid)
     
 }
 
-// setting player's direction considering current direction
 void Player::setDirection(Direction direct)
 {
-    // Snap camera_direction
+    // Convert camera-relative input into one of the four grid directions.
     glm::vec2 snapped_camera_dir = camera_direction;
     if(glm::abs(snapped_camera_dir.x) > glm::abs(snapped_camera_dir.y))
     {
@@ -91,6 +90,7 @@ void Player::setDirection(Direction direct)
 
 bool Player::update(Grid& grid)
 {
+    // Handles smooth movement while applying turns, wall checks, and pellet pickup at tile centers.
     float fracX = visual_position.x - glm::floor(visual_position.x);
     float fracY = visual_position.y - glm::floor(visual_position.y);
     
@@ -101,6 +101,7 @@ bool Player::update(Grid& grid)
 
     if((fracX < 0.07f || fracX > 0.93f) && (fracY < 0.07f || fracY > 0.93f))
     {
+        // Turn and collision decisions are only stable near tile centers.
         collectPellet(round(visual_position.x), round(visual_position.y), grid);
         std::cout <<"CHECKING"<<std::endl;
         Tile new_pos_tile = grid.getTile(
@@ -159,20 +160,16 @@ void Player::setPosition(const glm::vec2& pos)
 
 void Player::render(Shader& shader, unsigned int cubeVAO)
 {
-    // Utwórz macierz transformacji dla gracza
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(visual_position.x, 0.1f, visual_position.y)); // Lekko wyżej niż kafelki
-    model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f)); // Trochę mniejszy niż kafelki
+    model = glm::translate(model, glm::vec3(visual_position.x, 0.1f, visual_position.y));
+    model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f));
     
-    // Wyślij macierz modelu do shadera
     int modelLoc = glGetUniformLocation(shader.ID, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     
-    // Ustaw kolor gracza (żółty)
     int objectColorLoc = glGetUniformLocation(shader.ID, "objectColor");
     glUniform3f(objectColorLoc, color.r, color.g, color.b);
     
-    // Narysuj gracza
     glBindVertexArray(cubeVAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }

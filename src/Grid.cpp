@@ -9,7 +9,6 @@
 #include "../external/shader_s.h"
 
 bool Grid::loadFromFile(const std::string& path)
-//Loading txt file as a map
 {
     std::ifstream in(path);
     if(!in.is_open())
@@ -30,7 +29,7 @@ bool Grid::loadFromFile(const std::string& path)
     height = lines.size();
     width = lines[0].size();
     
-    // Calculate maximum value of width
+    // Support non-rectangular level files by padding shorter rows.
     int maxWidth = 0;
     for (const auto& l : lines) {
         maxWidth = std::max(maxWidth, (int)l.size());
@@ -55,7 +54,6 @@ bool Grid::loadFromFile(const std::string& path)
             }
             tiles[y*maxWidth+x] = t;
         }
-        // Fill rest of row with Empty
         for (int x = rowWidth; x < maxWidth; ++x) {
             tiles[y*maxWidth+x] = Tile::Empty;
         }
@@ -75,7 +73,6 @@ int Grid::getHeight() const
 }
 
 Tile Grid::getTile(int x, int y) const
-// Return the class of tile by given xy coordinates
 {
     if(x < 0 || x >= width || y < 0 || y >= height)
     {
@@ -96,8 +93,6 @@ glm::vec2 Grid::getGhostSpawnPosition() const
 }
 
 void Grid::collectTile(int x, int y) {
-// clearing the tile
-
     if (x >= 0 && x < width && y >= 0 && y < height) {
         tiles[y * width + x] = Tile::Empty;
     }
@@ -115,11 +110,9 @@ void Grid::render(Shader& shader, unsigned int cubeVAO)
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(x, 0.0f, y));
 
-            // Set the model matrix
             int modelLoc = glGetUniformLocation(shader.ID, "model");
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-            // Set color based on tile type
             int objectColorLoc = glGetUniformLocation(shader.ID, "objectColor");
             switch (tile) {
                 case Tile::Wall:
@@ -150,6 +143,7 @@ void Grid::render(Shader& shader, unsigned int cubeVAO)
 
 std::vector<glm::vec2> Grid::possible_moves(glm::vec2 position)
 {
+    // Expected input is a tile-centered position; results are neighboring non-wall tiles.
     std::vector<glm::vec2> result;
 
     if(getTile(position.x, position.y + 1) != Tile::Wall) result.push_back({position.x, position.y + 1.0f});

@@ -4,7 +4,7 @@
 class Grid;
 class Shader;
 
-// player's walking direction
+// Movement commands are relative to the camera direction.
 enum class Direction
 {
     Right,
@@ -19,7 +19,7 @@ public:
     Player();
     Player(float x, float y);
 
-    // basic moves
+    // Grid-space movement helpers.
     void moveUp();
     void moveDown();
     void moveLeft();
@@ -29,7 +29,7 @@ public:
     bool update(Grid& grid);
     bool collectPellet(int x, int y, Grid& grid);
 
-    // getters and setters
+    // Player state accessors.
     glm::vec2 getPosition() const { return visual_position; }
     glm::vec2 getCurrentDirection() const {return curr_direction; }
     glm::vec2 getCameraDirection() const {return camera_direction;}
@@ -42,9 +42,9 @@ public:
 
     
 private:
-    glm::vec2 position;         // Position on the grid
-    glm::vec3 color;            // Player's color
-    glm::vec2 visual_position;   // drawn position on the grid
+    glm::vec2 position;          // Logical grid position.
+    glm::vec3 color;             // Render color.
+    glm::vec2 visual_position;   // Interpolated draw position.
     glm::vec2 curr_direction;
     glm::vec2 target_direction;
     glm::vec2 camera_direction;

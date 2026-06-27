@@ -13,12 +13,11 @@
 #include "Player.hpp"
 #include "Enemy.hpp"
 
-// initializations
+// GLFW callbacks and input handling.
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-//settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 bool test = true;
@@ -29,7 +28,7 @@ float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-// timing
+// Frame timing.
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
@@ -37,15 +36,15 @@ float lastFrame = 0.0f;
 Grid* gameGridPtr = nullptr;
 Player* playerPtr = nullptr;
 
-// Movement timing
+// Player input timing.
 float lastMoveTime = 0.0f;
-const float MOVE_COOLDOWN = 0.05f; // 100ms between moves
-// Previous key states (for detecting key press vs hold)
+const float MOVE_COOLDOWN = 0.05f;
+
+// Previous key states are used to detect key presses instead of held keys.
 bool prevKeyUp = false;
 bool prevKeyDown = false;
 bool prevKeyLeft = false;
 bool prevKeyRight = false;
-// Check if file exists
 void checkFileExists(const std::string& path) {
     std::ifstream file(path);
     if (!file) {
@@ -55,21 +54,17 @@ void checkFileExists(const std::string& path) {
     }
 }
 
-// Camera distance from the player
 const glm::vec3 CAMERA_OFFSET = glm::vec3(0.0f, 5.0f, 10.0f);
 
 
 int main()
 {
 
-
-    //std::cout << "0";
-
     checkFileExists("./shaders/shader.vs");
     checkFileExists("./shaders/shader.fs");
 
     
-    //box verts
+    // Shared cube mesh used for tiles and characters.
     float vertices[] = {
         // Front face
         -0.5f, -0.5f,  0.5f, // Bottom-left
@@ -84,7 +79,6 @@ int main()
         -0.5f,  0.5f, -0.5f  // Top-left
     };
 
-    //box indices
     unsigned int indices[] = {
         // Front face
         0, 1, 2,
@@ -143,11 +137,10 @@ int main()
     }
     
     
-    // Create and compile our shader program
     Shader ourShader("./shaders/shader.vs", "./shaders/shader.fs");
-    glEnable(GL_DEPTH_TEST);    // Enable depth testing
+    glEnable(GL_DEPTH_TEST);
 
-    // Set up vertex data (and buffer(s)) and configure vertex attributes
+    // Upload cube geometry and configure the position attribute.
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -162,13 +155,6 @@ int main()
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3 * sizeof(float)));
-    //glEnableVertexAttribArray(1);
-
-    //glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(6 * sizeof(float)));
-    //glEnableVertexAttribArray(2);
-
 
     // Create player and set to starting position
     Player player;
@@ -188,7 +174,7 @@ int main()
         lastFrame = currentFrame;
         
         processInput(window);
-        // setting up the camera
+        // Smoothly follow behind the player based on the current movement direction.
         glm::vec3 playerPos = glm::vec3(playerPtr->getPosition().x, 0.0f, playerPtr->getPosition().y);
         glm::vec2 playerDir = playerPtr->getCameraDirection();
         glm::vec3 cameraOffset = CAMERA_OFFSET;
@@ -214,9 +200,7 @@ int main()
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
         
-        // Renderowanie planszy gry
         gameGrid.render(ourShader, VAO);
-        // Renderowanie gracza
         player.update(gameGrid);
         player.render(ourShader, VAO);
         glfwSwapBuffers(window);
@@ -247,7 +231,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
-    // Player movement
+    // Arrow keys queue grid movement relative to the camera.
     if (playerPtr && gameGridPtr) {
         float currentTime = glfwGetTime();
         if (currentTime - lastMoveTime > MOVE_COOLDOWN) {
@@ -256,7 +240,7 @@ void processInput(GLFWwindow* window)
             bool keyLeft = glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS;
             bool keyRight = glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS;
 
-            // Only execute on key press (transition from not pressed to pressed)
+            // Only handle transitions from released to pressed.
             if (keyUp && !prevKeyUp) {
                 playerPtr->setDirection(Direction::Forward);
                 lastMoveTime = currentTime;
@@ -274,7 +258,6 @@ void processInput(GLFWwindow* window)
                 lastMoveTime = currentTime;
             }
 
-            // Update previous states for next frame
             prevKeyUp = keyUp;
             prevKeyDown = keyDown;
             prevKeyLeft = keyLeft;
@@ -296,7 +279,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     }
 
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed
+    float yoffset = lastY - ypos; // Mouse y-coordinates are inverted.
 
     lastX = xpos;
     lastY = ypos;

@@ -66,6 +66,7 @@ void Enemy::assign_scatter()
 glm::vec2 Enemy::find_target()
 {
     glm::vec2 player_position = glm::round(player->getPosition());
+    // Each ghost type follows a different Pac-Man-style targeting rule.
     if(type == Type::Red)
     {
         target = player_position;
@@ -97,6 +98,7 @@ void Enemy::update(float timer, int level)
 {
     int currentSecond = static_cast<int>(timer);
 
+    // Scatter/chase schedules change at fixed timestamps for each level range.
     if (currentSecond != last_timer)
     {
         last_timer = currentSecond;
@@ -154,6 +156,7 @@ void Enemy::update(float timer, int level)
     }
     position = glm::round(position);
 
+    // Direction changes are made only at tile centers to keep grid movement stable.
     if(state == State::Scared)
     {
         if(state_change)
@@ -286,8 +289,8 @@ void Enemy::move()
 void Enemy::render(Shader& shader, unsigned int cubeVAO)
 {
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(position.x, 0.1f, position.y)); // a bit higher than a floor
-    model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f)); // a bit smaller than a 1x1 cube
+    model = glm::translate(model, glm::vec3(position.x, 0.1f, position.y));
+    model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f));
 
     int modelLoc = glGetUniformLocation(shader.ID, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
