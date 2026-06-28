@@ -130,7 +130,7 @@ int main()
 
     // Load game grid
     Grid gameGrid;
-    bool success = gameGrid.loadFromFile("./assets/levels/level1.txt");
+    bool success = gameGrid.loadFromFile("./assets/levels/classic_inspired.txt");
     if(!success)
     {
         std::cerr << "Failed to load game grid from file." << std::endl;
