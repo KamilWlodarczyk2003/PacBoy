@@ -20,7 +20,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-bool test = true;
+bool DEV = true;
 
 // Camera
 Camera camera(glm::vec3(0.0f, 5.0f, 10.0f)); 
@@ -219,6 +219,13 @@ int main()
 
         gameGrid.render(ourShader, VAO);
         player.render(ourShader, VAO);
+        if(DEV)
+        {
+            red_ghost.renderTargetBeam(ourShader, VAO);
+            pink_ghost.renderTargetBeam(ourShader, VAO);
+            cyan_ghost.renderTargetBeam(ourShader, VAO);
+            orange_ghost.renderTargetBeam(ourShader, VAO);
+        }
         red_ghost.render(ourShader, VAO);
         pink_ghost.render(ourShader, VAO);
         cyan_ghost.render(ourShader, VAO);

@@ -38,6 +38,7 @@ public:
     void calc_direction(glm::vec2 curr, glm::vec2 dest);
     void move();
     void render(Shader& shader, unsigned int cubeVAO);
+    void renderTargetBeam(Shader& shader, unsigned int cubeVAO);
     
 
 private:
