@@ -7,11 +7,38 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../external/shader_s.h"
 
+namespace
+{
+    const glm::vec3 red_color = glm::vec3(1.0f, 0.0f, 0.0f);
+    const glm::vec3 cyan_color = glm::vec3(0.0f, 1.0f, 1.0f);
+    const glm::vec3 pink_color = glm::vec3(1.0f, 0.4f, 0.7f);
+    const glm::vec3 orange_color = glm::vec3(1.0f, 0.5f, 0.0f);
+
+    glm::vec3 get_enemy_color(Type type)
+    {
+        switch (type)
+        {
+        case Type::Red:
+            return red_color;
+        case Type::Pink:
+            return pink_color;
+        case Type::Blue:
+            return cyan_color;
+        case Type::Orange:
+            return orange_color;
+        }
+
+        return red_color;
+    }
+}
+
 Enemy::Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos) : 
 type(enemy_type), 
-color(1.0f, 0.0f, 0.0f),
+color(get_enemy_color(enemy_type)),
 grid(grid_in),
 player(player_in),
+position(start_pos),
+direction(0.0f, 0.0f),
 spawn_point(start_pos)
 {
     assign_scatter();

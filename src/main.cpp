@@ -166,6 +166,16 @@ int main()
     gameGridPtr = &gameGrid;
     playerPtr = &player;
 
+    glm::vec2 ghostSpawn = gameGrid.getGhostSpawnPosition();
+    Enemy red_ghost(Type::Red, &gameGrid, &player, ghostSpawn);
+    Enemy pink_ghost(Type::Pink, &gameGrid, &player, ghostSpawn);
+    Enemy cyan_ghost(Type::Blue, &gameGrid, &player, ghostSpawn);
+    Enemy orange_ghost(Type::Orange, &gameGrid, &player, ghostSpawn);
+
+    pink_ghost.set_red_ghost(&red_ghost);
+    cyan_ghost.set_red_ghost(&red_ghost);
+    orange_ghost.set_red_ghost(&red_ghost);
+
     // Main loop
     while(!glfwWindowShouldClose(window))
     {   
@@ -200,9 +210,19 @@ int main()
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
         
-        gameGrid.render(ourShader, VAO);
         player.update(gameGrid);
+
+        red_ghost.update(currentFrame, 1);
+        pink_ghost.update(currentFrame, 1);
+        cyan_ghost.update(currentFrame, 1);
+        orange_ghost.update(currentFrame, 1);
+
+        gameGrid.render(ourShader, VAO);
         player.render(ourShader, VAO);
+        red_ghost.render(ourShader, VAO);
+        pink_ghost.render(ourShader, VAO);
+        cyan_ghost.render(ourShader, VAO);
+        orange_ghost.render(ourShader, VAO);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

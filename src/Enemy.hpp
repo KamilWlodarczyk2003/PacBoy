@@ -57,7 +57,7 @@ private:
     bool state_change = false;
     int last_timer {-1};
 
-    Enemy* red_ghost;
+    Enemy* red_ghost{nullptr};
     Grid* grid;
     Player* player;
 
