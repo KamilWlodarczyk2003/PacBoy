@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "../external/shader_s.h"
@@ -209,7 +210,8 @@ void Enemy::update(float timer, int level)
                 );
                 random_position = possible_positions[dist(gen)];
             }
-            while (random_position == position - direction);
+            while (random_position == position - direction 
+                    || grid->getTile(random_position.x, random_position.y) == Tile::GhostSpawnEntrance);
 
             calc_direction(position, random_position);
         }
@@ -222,15 +224,26 @@ void Enemy::update(float timer, int level)
             state_change = false;
         } else
         {
-            find_target();
+            if(!left_spawn)
+            {
+                target = grid->getGhostExitPosition();
+                if(position == grid->getGhostExitPosition())
+                {
+                    left_spawn = true;
+                }
+            }
+            else    find_target();
+            
             std::vector<glm::vec2> possible_positions = grid->possible_moves(position);
 
-            int best_val = INT_MAX;
-            glm::vec2 next_move;
+            float best_val = std::numeric_limits<float>::max();
+            glm::vec2 next_move = position;
 
             for(glm::vec2 pos : possible_positions)
             {
-                if(pos != position - direction)
+                if(pos != position - direction 
+                    && (!left_spawn || grid->getTile(pos.x, pos.y) != Tile::GhostSpawnEntrance)
+                )
                 {
                     float dist = glm::distance(pos, target);
 
@@ -254,15 +267,26 @@ void Enemy::update(float timer, int level)
             state_change = false;
         }else
         {
-            target = scatter_target;
+            if(!left_spawn)
+            {
+                target = grid->getGhostExitPosition();
+                if(position == grid->getGhostExitPosition())
+                {
+                    left_spawn = true;
+                }
+            }
+            else    target = scatter_target;
+            
             std::vector<glm::vec2> possible_positions = grid->possible_moves(position);
 
-            int best_val = INT_MAX;
-            glm::vec2 next_move;
+            float best_val = std::numeric_limits<float>::max();
+            glm::vec2 next_move = position;
 
             for(glm::vec2 pos : possible_positions)
             {
-                if(pos != position * 1.0f)
+                if(pos != position - direction
+                && (!left_spawn || grid->getTile(pos.x, pos.y) != Tile::GhostSpawnEntrance)
+                )
                 {
                     float dist = glm::distance(pos, target);
 
@@ -363,4 +387,9 @@ void Enemy::renderTargetBeam(Shader& shader, unsigned int cubeVAO)
 bool Enemy::is_at_center(glm::vec2 pos)
 {
     return glm::length(pos - glm::round(pos)) < 0.001f;
+}
+
+bool Enemy::is_spawn_gate(glm::vec2 pos)
+{
+    return grid->getTile(pos.x, pos.y) == Tile::GhostSpawnEntrance;
 }

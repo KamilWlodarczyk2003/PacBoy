@@ -54,6 +54,7 @@ private:
     glm::vec3 color;
 
     bool is_at_center(glm::vec2 pos);
+    bool is_spawn_gate(glm::vec2 pos);
 
     bool state_change = false;
     int last_timer {-1};
@@ -63,4 +64,5 @@ private:
     Player* player;
 
     const float SPEED = 0.05;
+    bool left_spawn = false;
 };

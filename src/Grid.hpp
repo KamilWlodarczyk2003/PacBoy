@@ -12,7 +12,9 @@ enum class Tile {
     Pellet,
     Energizer,
     PacmanStart,
-    GhostStart
+    GhostStart,
+    GhostSpawnEntrance,
+    GhostSpawnExit
 };
 
 class Grid
@@ -26,6 +28,8 @@ public:
     int getHeight() const;
     glm::vec2 getPacmanStartPosition() const;
     glm::vec2 getGhostSpawnPosition() const;
+    glm::vec2 getGhostEntryPosition() const {return ghostEntrancePos;}
+    glm::vec2 getGhostExitPosition() const {return ghostExitPos;}
     std::vector<glm::vec2> possible_moves(glm::vec2 position);
 private:
     std::vector<Tile> tiles;
@@ -33,5 +37,7 @@ private:
     int height;
     glm::vec2 pacmanStartPos;
     glm::vec2 ghostStartPos;
+    glm::vec2 ghostEntrancePos;
+    glm::vec2 ghostExitPos;
     std::vector<std::string> lines;
 };

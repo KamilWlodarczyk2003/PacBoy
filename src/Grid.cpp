@@ -49,6 +49,8 @@ bool Grid::loadFromFile(const std::string& path)
                 case '*': t=Tile::Energizer; break;
                 case 'P': t=Tile::PacmanStart; pacmanStartPos={x,y}; break;
                 case 'G': t=Tile::GhostStart; ghostStartPos={x,y}; break;
+                case 'E': t=Tile::GhostSpawnExit; ghostExitPos={x,y}; break;
+                case 'S': t=Tile::GhostSpawnEntrance; ghostEntrancePos={x,y}; break;
                 case ' ': t=Tile::Empty; break;
                 default: std::cerr<<"Unknown char "<<c<<"\n"; break;
             }
@@ -127,11 +129,8 @@ void Grid::render(Shader& shader, unsigned int cubeVAO)
                 case Tile::PacmanStart:
                     glUniform3f(objectColorLoc, 1.0f, 1.0f, 1.0f); // white
                     break;
-                case Tile::GhostStart:
+                case Tile::GhostSpawnEntrance:
                     glUniform3f(objectColorLoc, 1.0f, 0.0f, 0.0f); // red
-                    break;
-                default:
-                    glUniform3f(objectColorLoc, 0.5f, 0.5f, 0.5f); // gray
                     break;
             }
             
