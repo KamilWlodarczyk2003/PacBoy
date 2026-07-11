@@ -22,6 +22,7 @@ set(SOURCES
     src/Grid.cpp
     src/Player.cpp
     src/Enemy.cpp
+    src/GameState.cpp
 )
 
 # headers

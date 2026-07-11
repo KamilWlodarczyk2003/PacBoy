@@ -12,6 +12,7 @@
 #include "Grid.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
+#include "GameState.hpp"
 
 // GLFW callbacks and input handling.
 void processInput(GLFWwindow* window);
@@ -156,11 +157,13 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    // Create GameState
+    GameState gameState;
+
     // Create player and set to starting position
-    Player player;
     glm::vec2 pacmanStart = gameGrid.getPacmanStartPosition();
     std::cout << "Pacman start position: " << pacmanStart.x << ", " << pacmanStart.y << std::endl;
-    player.setPosition(pacmanStart);
+    Player player(pacmanStart.x, pacmanStart.y, &gameState);
     
     // Set global pointers for input handling
     gameGridPtr = &gameGrid;

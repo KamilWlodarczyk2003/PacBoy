@@ -5,23 +5,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Player::Player() :  position(0.0f, 0.0f), 
-                    color(1.0f, 1.0f, 0.0f), 
-                    score(0), 
-                    visual_position(0.0f, 0.0f), 
-                    curr_direction(1.0f, 0.0f),
-                    camera_direction(1.0f, 0.0f),
-                    target_direction(1.0f, 0.0f)
-{
-}
 
-Player::Player(float x, float y) :  position(x, y), 
-                                    color(1.0f, 1.0f, 0.0f), 
-                                    score(0), 
-                                    visual_position(x, y), 
-                                    curr_direction(1.0f, 0.0f),
-                                    camera_direction(1.0f, 0.0f),
-                                    target_direction(1.0f, 0.0f)
+Player::Player(float x, float y, GameState *state) :  position(x, y), 
+                                        color(1.0f, 1.0f, 0.0f), 
+                                        visual_position(x, y), 
+                                        curr_direction(1.0f, 0.0f),
+                                        camera_direction(1.0f, 0.0f),
+                                        target_direction(1.0f, 0.0f),
+                                        gameState(state)
 {
 }
 
@@ -47,12 +38,12 @@ bool Player::collectPellet(int x, int y, Grid& grid)
     Tile tile = grid.getTile(x,y);
     if(tile == Tile::Pellet)
     {
-        score += 10;
+        gameState->addScore(10);
         grid.collectTile(x,y);
         return true;
     } else if(tile == Tile::Energizer)
     {
-        score += 50;
+        gameState->addScore(50);
         grid.collectTile(x,y);
         return true;
     }
