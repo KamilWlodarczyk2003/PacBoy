@@ -173,3 +173,8 @@ void Player::render(Shader& shader, unsigned int cubeVAO)
     glBindVertexArray(cubeVAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
+
+void Player::setCollided(bool collidedValue)
+{
+    collided = collidedValue;
+}

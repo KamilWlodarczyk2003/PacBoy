@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Grid.hpp"
+#include "Rect.hpp"
 
 class Player;
 class Shader;
@@ -39,6 +40,7 @@ public:
     void move();
     void render(Shader& shader, unsigned int cubeVAO);
     void renderTargetBeam(Shader& shader, unsigned int cubeVAO);
+    bool checkCollision(const Rect& playerRect);
     
 
 private:
@@ -52,6 +54,7 @@ private:
     glm::vec2 spawn_point;
     glm::vec2 spawn_entrance;
     glm::vec3 color;
+    Rect enemyRect;
 
     bool is_at_center(glm::vec2 pos);
     bool is_spawn_gate(glm::vec2 pos);
@@ -64,5 +67,6 @@ private:
     Player* player;
 
     const float SPEED = 0.05;
+    const float WIDTH = 1.0f;
     bool left_spawn = false;
 };

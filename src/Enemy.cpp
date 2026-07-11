@@ -43,7 +43,8 @@ target(start_pos),
 position(start_pos),
 direction(0.0f, 0.0f),
 spawn_point(start_pos),
-spawn_entrance(start_pos + glm::vec2(0.0f, -1.0f))
+spawn_entrance(start_pos + glm::vec2(0.0f, -1.0f)),
+enemyRect{start_pos.x, start_pos.y, WIDTH}
 {
     assign_scatter();
 }
@@ -338,6 +339,13 @@ void Enemy::update(float timer, int level)
 void Enemy::move()
 {
     position = position + direction*SPEED;
+    enemyRect.x = position.x;
+    enemyRect.y = position.y;
+    
+    if(checkCollision(player->getPlayerRect()))
+    {
+        player->setCollided(true);
+    }
 }
 
 void Enemy::render(Shader& shader, unsigned int cubeVAO)
@@ -392,4 +400,12 @@ bool Enemy::is_at_center(glm::vec2 pos)
 bool Enemy::is_spawn_gate(glm::vec2 pos)
 {
     return grid->getTile(pos.x, pos.y) == Tile::GhostSpawnEntrance;
+}
+
+bool Enemy::checkCollision(const Rect& playerRect)
+{
+    return enemyRect.x < playerRect.x + playerRect.w &&
+           enemyRect.x + enemyRect.w > playerRect.x &&
+           enemyRect.y < playerRect.y + playerRect.w &&
+           enemyRect.y + enemyRect.w > playerRect.y;
 }
