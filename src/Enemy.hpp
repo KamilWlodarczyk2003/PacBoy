@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "Grid.hpp"
 #include "Rect.hpp"
+#include "GameState.hpp"
 
 class Player;
 class Shader;
@@ -26,7 +27,7 @@ class Enemy
 {
 public:
 
-    Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos); 
+    Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos, GameState* gmState); 
 
     glm::vec2 find_target();
 
@@ -67,6 +68,6 @@ private:
     Player* player;
 
     const float SPEED = 0.05;
-    const float WIDTH = 1.0f;
+    static constexpr float HITBOX_SIZE = 0.8f;
     bool left_spawn = false;
 };

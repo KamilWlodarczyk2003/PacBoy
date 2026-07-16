@@ -10,7 +10,7 @@ The project is educational in nature – the goal is to build a simple 3D game e
 - Level loading from text files  
 - Rendering of walls, pellets, and energizers using instancing  
 - Pac-Man movement with grid-based collision detection  
-- Ghost AI with pathfinding algorithms (BFS / A*)  
+- Ghost AI with pathfinding algorithms
 - Shader-based lighting (GLSL)  
 - Scoring system and pellet collection  
 

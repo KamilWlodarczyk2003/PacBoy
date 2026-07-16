@@ -23,6 +23,8 @@ set(SOURCES
     src/Player.cpp
     src/Enemy.cpp
     src/GameState.cpp
+    src/Hud.cpp
+    src/PixelFont.cpp
 )
 
 # headers

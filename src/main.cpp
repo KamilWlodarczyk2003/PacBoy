@@ -13,6 +13,7 @@
 #include "Player.hpp"
 #include "Enemy.hpp"
 #include "GameState.hpp"
+#include "Hud.hpp"
 
 // GLFW callbacks and input handling.
 void processInput(GLFWwindow* window);
@@ -160,6 +161,9 @@ int main()
     // Create GameState
     GameState gameState;
 
+    // Create Hud
+    Hud hud(SCR_WIDTH, SCR_HEIGHT);
+
     // Create player and set to starting position
     glm::vec2 pacmanStart = gameGrid.getPacmanStartPosition();
     std::cout << "Pacman start position: " << pacmanStart.x << ", " << pacmanStart.y << std::endl;
@@ -170,14 +174,16 @@ int main()
     playerPtr = &player;
 
     glm::vec2 ghostSpawn = gameGrid.getGhostSpawnPosition();
-    Enemy red_ghost(Type::Red, &gameGrid, &player, ghostSpawn);
-    Enemy pink_ghost(Type::Pink, &gameGrid, &player, ghostSpawn);
-    Enemy cyan_ghost(Type::Blue, &gameGrid, &player, ghostSpawn);
-    Enemy orange_ghost(Type::Orange, &gameGrid, &player, ghostSpawn);
+    Enemy red_ghost(Type::Red, &gameGrid, &player, ghostSpawn, &gameState);
+    Enemy pink_ghost(Type::Pink, &gameGrid, &player, ghostSpawn, &gameState);
+    Enemy cyan_ghost(Type::Blue, &gameGrid, &player, ghostSpawn, &gameState);
+    Enemy orange_ghost(Type::Orange, &gameGrid, &player, ghostSpawn, &gameState);
 
     pink_ghost.set_red_ghost(&red_ghost);
     cyan_ghost.set_red_ghost(&red_ghost);
     orange_ghost.set_red_ghost(&red_ghost);
+
+    float invulnerableUntil = 0.0f;
 
     // Main loop
     while(!glfwWindowShouldClose(window))
@@ -215,10 +221,33 @@ int main()
         
         player.update(gameGrid);
 
-        red_ghost.update(currentFrame, 1);
-        pink_ghost.update(currentFrame, 1);
-        cyan_ghost.update(currentFrame, 1);
-        orange_ghost.update(currentFrame, 1);
+        int level = gameState.getLevel();
+
+        red_ghost.update(currentFrame, level);
+        pink_ghost.update(currentFrame, level);
+        cyan_ghost.update(currentFrame, level);
+        orange_ghost.update(currentFrame, level);
+
+        Rect playerRect = player.getPlayerRect();
+
+        bool playerHit =
+            red_ghost.checkCollision(playerRect) ||
+            pink_ghost.checkCollision(playerRect) ||
+            cyan_ghost.checkCollision(playerRect) ||
+            orange_ghost.checkCollision(playerRect);
+
+        if (playerHit && currentFrame >= invulnerableUntil)
+        {
+            gameState.loseLife();
+
+            // Przez 1,5 sekundy nie można ponownie stracić życia.
+            invulnerableUntil = currentFrame + 1.5f;
+
+            if (!gameState.isGameOver())
+            {
+                player.setPosition(pacmanStart);
+            }
+        }
 
         gameGrid.render(ourShader, VAO);
         player.render(ourShader, VAO);
@@ -233,6 +262,11 @@ int main()
         pink_ghost.render(ourShader, VAO);
         cyan_ghost.render(ourShader, VAO);
         orange_ghost.render(ourShader, VAO);
+
+        glDisable(GL_DEPTH_TEST);
+        hud.render(gameState);
+        glEnable(GL_DEPTH_TEST);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

@@ -34,7 +34,7 @@ namespace
     }
 }
 
-Enemy::Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos) : 
+Enemy::Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos, GameState* gmState) : 
 type(enemy_type), 
 color(get_enemy_color(enemy_type)),
 grid(grid_in),
@@ -44,7 +44,7 @@ position(start_pos),
 direction(0.0f, 0.0f),
 spawn_point(start_pos),
 spawn_entrance(start_pos + glm::vec2(0.0f, -1.0f)),
-enemyRect{start_pos.x, start_pos.y, WIDTH}
+enemyRect{start_pos.x - HITBOX_SIZE / 2.0f, start_pos.y - HITBOX_SIZE / 2.0f, HITBOX_SIZE}
 {
     assign_scatter();
 }
@@ -339,13 +339,9 @@ void Enemy::update(float timer, int level)
 void Enemy::move()
 {
     position = position + direction*SPEED;
-    enemyRect.x = position.x;
-    enemyRect.y = position.y;
+    enemyRect.x = position.x - HITBOX_SIZE / 2.0f;
+    enemyRect.y = position.y - HITBOX_SIZE / 2.0f;
     
-    if(checkCollision(player->getPlayerRect()))
-    {
-        player->setCollided(true);
-    }
 }
 
 void Enemy::render(Shader& shader, unsigned int cubeVAO)

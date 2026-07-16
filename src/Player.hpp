@@ -34,7 +34,14 @@ public:
     glm::vec2 getPosition() const { return visual_position; }
     glm::vec2 getCurrentDirection() const {return curr_direction; }
     glm::vec2 getCameraDirection() const {return camera_direction;}
-    Rect getPlayerRect() const { return Rect{visual_position.x, visual_position.y, WIDTH}; }
+    Rect getPlayerRect() const
+    {
+        return Rect{
+        visual_position.x - HITBOX_SIZE / 2.0f,
+        visual_position.y - HITBOX_SIZE / 2.0f,
+        HITBOX_SIZE
+        };
+    }
     bool getCollided() const { return collided; }
     void setPosition(float x, float y);
     void setPosition(const glm::vec2& pos);
@@ -58,5 +65,5 @@ private:
     const float MOVEMENT_THRESHOLD_VIS = 0.1;
     const float MOVEMENT_THRESHOLD_POS = 0.05;
     const float SPEED = 0.05;
-    const float WIDTH = 1.0f;
+    static constexpr float HITBOX_SIZE = 0.8f;
 };
