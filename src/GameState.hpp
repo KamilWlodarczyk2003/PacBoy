@@ -8,6 +8,7 @@ public:
     void nextLevel();
     void collectEnergizer();
     void collectPellet();
+    bool checkIfNextLevel();
 
     int getScore() const { return score; }
     int getLives() const { return lives; }

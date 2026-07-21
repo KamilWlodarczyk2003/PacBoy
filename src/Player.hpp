@@ -53,6 +53,7 @@ public:
     void setCollided(bool collidedValue);
     void resetEnergizer() { energizer = false; }
     void killGhost();
+    void resetPlayer();
 
 
     
@@ -64,6 +65,7 @@ private:
     glm::vec2 curr_direction;
     glm::vec2 target_direction;
     glm::vec2 camera_direction;
+    glm::vec2 initialPosition;
 
     bool collided{false};
     bool energizer{false};

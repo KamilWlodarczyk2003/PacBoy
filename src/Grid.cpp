@@ -17,6 +17,12 @@ bool Grid::loadFromFile(const std::string& path)
         return false;
     }
 
+    lines.clear();
+    tiles.clear();
+
+    initPelletCount = 0;
+    initEnergizerCount = 0;
+
     std::string line;
 
     while(std::getline(in, line))

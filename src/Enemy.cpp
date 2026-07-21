@@ -437,3 +437,16 @@ bool Enemy::checkCollision(const Rect& playerRect)
            enemyRect.y < playerRect.y + playerRect.w &&
            enemyRect.y + enemyRect.w > playerRect.y;
 }
+
+void Enemy::resetGhost()
+{
+    set_position(get_spawn_point());
+    state_change = false;
+    energizerChange = false;
+    left_spawn = false;
+    state = State::Scatter;
+    last_timer = -1;
+    scaredUntil = 0.0f;
+    color = color::get_enemy_color(type);
+    direction = glm::vec2(0.0f, 0.0f);
+}

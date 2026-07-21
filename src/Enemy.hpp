@@ -32,6 +32,7 @@ public:
     glm::vec2 find_target();
 
     glm::vec2 get_position() const {return position;}
+    glm::vec2 get_spawn_point() const {return spawn_point;}
     State get_state() const {return state;}
 
     void set_red_ghost(Enemy* red_ghost_v);
@@ -42,6 +43,7 @@ public:
         target = spawn_entrance;
         state_change = false;
     }
+    void set_position(glm::vec2 pos) { position = pos; }
     void assign_scatter();
     void update(float timer, int level);
     void calc_direction(glm::vec2 curr, glm::vec2 dest);
@@ -49,6 +51,7 @@ public:
     void render(Shader& shader, unsigned int cubeVAO);
     void renderTargetBeam(Shader& shader, unsigned int cubeVAO);
     bool checkCollision(const Rect& playerRect);
+    void resetGhost();
     
 
 private:

@@ -186,11 +186,12 @@ int main()
     orange_ghost.set_red_ghost(&red_ghost);
 
     float invulnerableUntil = 0.0f;
+    float timerOffset = 0.0f;
 
     // Main loop
     while(!glfwWindowShouldClose(window))
     {   
-        float currentFrame = glfwGetTime();
+        float currentFrame = glfwGetTime() - timerOffset;
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         
@@ -360,6 +361,25 @@ int main()
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        if(gameState.checkIfNextLevel())
+        {
+            if (gameGrid.loadFromFile("./assets/levels/classic_inspired.txt"))
+            {
+                gameState.setPelletCount(gameGrid.getInitPelletCount());
+                gameState.setEnergizerCount(gameGrid.getInitEnergizerCount());
+
+                player.resetPlayer();
+                red_ghost.resetGhost();
+                pink_ghost.resetGhost();
+                cyan_ghost.resetGhost();
+                orange_ghost.resetGhost();
+
+                lastFrame = 0.0f;
+                timerOffset += currentFrame;
+                invulnerableUntil = 0.0f;
+            }
+        }
     }
 
     glDeleteVertexArrays(1, &VAO);

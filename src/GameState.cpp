@@ -32,3 +32,11 @@ void GameState::collectEnergizer()
 {
     energizerCount--;
 }
+
+bool GameState::checkIfNextLevel()
+{
+    if(!(pelletsCount == 0 && energizerCount == 0)) return false;
+
+    level++;
+    return true;
+}

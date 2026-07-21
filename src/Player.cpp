@@ -12,7 +12,8 @@ Player::Player(float x, float y, GameState *state) :  position(x, y),
                                         curr_direction(1.0f, 0.0f),
                                         camera_direction(1.0f, 0.0f),
                                         target_direction(1.0f, 0.0f),
-                                        gameState(state)
+                                        gameState(state),
+                                        initialPosition(x, y)
 {
 }
 
@@ -183,4 +184,13 @@ void Player::killGhost()
     {
         multiplier++;
     }
+}
+
+
+void Player::resetPlayer()
+{
+    setPosition(initialPosition);
+
+    curr_direction = glm::vec2(0.0f, 0.0f);
+    target_direction = glm::vec2(0.0f, 0.0f);
 }
