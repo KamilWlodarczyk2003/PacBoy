@@ -228,6 +228,11 @@ int main()
         cyan_ghost.update(currentFrame, level);
         orange_ghost.update(currentFrame, level);
 
+        if (player.getEnergizer())
+        {
+            player.resetEnergizer();
+        }
+
         Rect playerRect = player.getPlayerRect();
 
         bool playerHit =

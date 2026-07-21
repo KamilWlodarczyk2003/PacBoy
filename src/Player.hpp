@@ -43,12 +43,15 @@ public:
         };
     }
     bool getCollided() const { return collided; }
+    bool getEnergizer() const { return energizer; }
     void setPosition(float x, float y);
     void setPosition(const glm::vec2& pos);
     void setDirection(Direction direct);
+    void setEnergizerTrue() { energizer = true; }
 
     void render(Shader& shader, unsigned int cubeVAO);
     void setCollided(bool collidedValue);
+    void resetEnergizer() { energizer = false; }
 
 
     
@@ -62,6 +65,7 @@ private:
     glm::vec2 camera_direction;
 
     bool collided{false};
+    bool energizer{false};
     const float MOVEMENT_THRESHOLD_VIS = 0.1;
     const float MOVEMENT_THRESHOLD_POS = 0.05;
     const float SPEED = 0.05;

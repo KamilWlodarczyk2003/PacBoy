@@ -61,7 +61,9 @@ private:
     bool is_spawn_gate(glm::vec2 pos);
 
     bool state_change = false;
+    bool energizerChange = false;
     int last_timer {-1};
+    float scaredUntil {0};
 
     Enemy* red_ghost{nullptr};
     Grid* grid;

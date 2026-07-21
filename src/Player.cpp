@@ -45,6 +45,7 @@ bool Player::collectPellet(int x, int y, Grid& grid)
     {
         gameState->addScore(50);
         grid.collectTile(x,y);
+        setEnergizerTrue();
         return true;
     }
     return false;

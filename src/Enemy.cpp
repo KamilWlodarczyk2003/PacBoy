@@ -130,57 +130,69 @@ void Enemy::update(float timer, int level)
 {
     int currentSecond = static_cast<int>(timer);
 
-    // Scatter/chase schedules change at fixed timestamps for each level range.
-    if (currentSecond != last_timer)
+    
+    bool isScared = player->getEnergizer();
+
+
+    if(isScared)
     {
-        last_timer = currentSecond;
-        if(level == 1)
+        state = State::Scared;
+        scaredUntil = timer + 6;
+    }
+    else if (timer >= scaredUntil)
+    {
+        // Scatter/chase schedules change at fixed timestamps for each level range.
+        if (currentSecond != last_timer)
         {
-            if(currentSecond == 7 || currentSecond == 27 || currentSecond == 34 || currentSecond == 54 || currentSecond == 59 || currentSecond == 79 || currentSecond == 84)
-            {state_change = true;}
+            last_timer = currentSecond;
+            if(level == 1)
+            {
+                if(currentSecond == 7 || currentSecond == 27 || currentSecond == 34 || currentSecond == 54 || currentSecond == 59 || currentSecond == 79 || currentSecond == 84)
+                {state_change = true;}
 
 
-            if(currentSecond == 27 || currentSecond == 54 || currentSecond == 79)
-            {
-                state = State::Scatter;
-            } 
-            else if(currentSecond == 7 || currentSecond == 34 || currentSecond == 59 || currentSecond == 84)
-            {
-                state = State::Chase;
+                if(currentSecond == 27 || currentSecond == 54 || currentSecond == 79)
+                {
+                    state = State::Scatter;
+                } 
+                else if(currentSecond == 7 || currentSecond == 34 || currentSecond == 59 || currentSecond >= 84)
+                {
+                    state = State::Chase;
+                }
             }
-        }
-        else if(level >= 2 && level <= 4)
-        {
-            if(currentSecond == 7 || currentSecond == 27 || currentSecond == 34 || currentSecond == 54 || currentSecond == 59)
-            {state_change = true;}
+            else if(level >= 2 && level <= 4)
+            {
+                if(currentSecond == 7 || currentSecond == 27 || currentSecond == 34 || currentSecond == 54 || currentSecond == 59)
+                {state_change = true;}
 
 
-            if(currentSecond == 27 || currentSecond == 54)
-            {
-                state = State::Scatter;
-            } 
-            else if(currentSecond == 7 || currentSecond == 34 || currentSecond == 59)
-            {
-                state = State::Chase;
+                if(currentSecond == 27 || currentSecond == 54)
+                {
+                    state = State::Scatter;
+                } 
+                else if(currentSecond == 7 || currentSecond == 34 || currentSecond >= 59)
+                {
+                    state = State::Chase;
+                }
             }
-        }
-        else if(level >= 5)
-        {
-            if(currentSecond == 5 || currentSecond == 25 || currentSecond == 30 || currentSecond == 50 || currentSecond == 55)
-            {state_change = true;}
+            else if(level >= 5)
+            {
+                if(currentSecond == 5 || currentSecond == 25 || currentSecond == 30 || currentSecond == 50 || currentSecond == 55)
+                {state_change = true;}
 
 
-            if(currentSecond == 25 || currentSecond == 50)
-            {
-                state = State::Scatter;
-            } 
-            else if(currentSecond == 5 || currentSecond == 30 || currentSecond == 55)
-            {
-                state = State::Chase;
+                if(currentSecond == 25 || currentSecond == 50)
+                {
+                    state = State::Scatter;
+                } 
+                else if(currentSecond == 5 || currentSecond == 30 || currentSecond >= 55)
+                {
+                    state = State::Chase;
+                }
             }
         }
     }
-
+    
     if (!is_at_center(position))
     {
         move();
