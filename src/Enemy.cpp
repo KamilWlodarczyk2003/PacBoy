@@ -9,12 +9,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../external/shader_s.h"
 
-namespace
+namespace color
 {
     const glm::vec3 red_color = glm::vec3(1.0f, 0.0f, 0.0f);
     const glm::vec3 cyan_color = glm::vec3(0.0f, 1.0f, 1.0f);
     const glm::vec3 pink_color = glm::vec3(1.0f, 0.4f, 0.7f);
     const glm::vec3 orange_color = glm::vec3(1.0f, 0.5f, 0.0f);
+    const glm::vec3 blue_color = glm::vec3(0.0f, 0.2f, 1.0f);
 
     glm::vec3 get_enemy_color(Type type)
     {
@@ -36,7 +37,7 @@ namespace
 
 Enemy::Enemy(Type enemy_type, Grid* grid_in, Player* player_in, glm::vec2 start_pos, GameState* gmState) : 
 type(enemy_type), 
-color(get_enemy_color(enemy_type)),
+color(color::get_enemy_color(enemy_type)),
 grid(grid_in),
 player(player_in),
 target(start_pos),
@@ -138,9 +139,11 @@ void Enemy::update(float timer, int level)
     {
         state = State::Scared;
         scaredUntil = timer + 6;
+        color = color::blue_color;
     }
     else if (timer >= scaredUntil)
     {
+        color = color::get_enemy_color(type);
         // Scatter/chase schedules change at fixed timestamps for each level range.
         if (currentSecond != last_timer)
         {
