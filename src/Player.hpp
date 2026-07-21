@@ -47,11 +47,12 @@ public:
     void setPosition(float x, float y);
     void setPosition(const glm::vec2& pos);
     void setDirection(Direction direct);
-    void setEnergizerTrue() { energizer = true; }
+    void setEnergizerTrue() { energizer = true; multiplier = 0; }
 
     void render(Shader& shader, unsigned int cubeVAO);
     void setCollided(bool collidedValue);
     void resetEnergizer() { energizer = false; }
+    void killGhost();
 
 
     
@@ -66,6 +67,7 @@ private:
 
     bool collided{false};
     bool energizer{false};
+    int multiplier = 0;
     const float MOVEMENT_THRESHOLD_VIS = 0.1;
     const float MOVEMENT_THRESHOLD_POS = 0.05;
     const float SPEED = 0.05;

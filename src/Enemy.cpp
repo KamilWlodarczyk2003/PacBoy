@@ -44,7 +44,7 @@ target(start_pos),
 position(start_pos),
 direction(0.0f, 0.0f),
 spawn_point(start_pos),
-spawn_entrance(start_pos + glm::vec2(0.0f, -1.0f)),
+spawn_entrance(grid_in->getGhostEntryPosition()),
 enemyRect{start_pos.x - HITBOX_SIZE / 2.0f, start_pos.y - HITBOX_SIZE / 2.0f, HITBOX_SIZE}
 {
     assign_scatter();
@@ -134,16 +134,18 @@ void Enemy::update(float timer, int level)
     
     bool isScared = player->getEnergizer();
 
-
-    if(isScared)
+    if (state == State::Scared && timer >= scaredUntil)
+    {
+        color = color::get_enemy_color(type);
+    }
+    if(isScared && state != State::Dead)
     {
         state = State::Scared;
         scaredUntil = timer + 6;
         color = color::blue_color;
     }
-    else if (timer >= scaredUntil)
+    else if (state != State::Dead && timer >= scaredUntil)
     {
-        color = color::get_enemy_color(type);
         // Scatter/chase schedules change at fixed timestamps for each level range.
         if (currentSecond != last_timer)
         {
@@ -322,25 +324,40 @@ void Enemy::update(float timer, int level)
         if(position == spawn_entrance) 
         {
             target = spawn_point;
+        }
+
+        if(position == spawn_point)
+        {
+            state = State::Chase;
+            left_spawn = false;
+            state_change = false;
+            color = color::get_enemy_color(type);
+            target = grid->getGhostExitPosition();
             calc_direction(position, target);
         }
         else
         {
-            target = spawn_entrance;
             std::vector<glm::vec2> possible_positions = grid->possible_moves(position);
 
-            int best_val = INT_MAX;
-            glm::vec2 next_move;
+            float bestDistance = std::numeric_limits<float>::max();
+            glm::vec2 next_move = position;
 
-            for(glm::vec2 pos : possible_positions)
+            glm::vec2 reversePosition = position - direction;
+
+
+            for (const glm::vec2& possible_position : possible_positions)
             {
-
-                float dist = glm::distance(pos, target);
-
-                if(dist < best_val)
+                if (possible_position == reversePosition && possible_positions.size() > 1)
                 {
-                    best_val = dist;
-                    next_move = pos;
+                    continue;
+                }
+
+                float distance = glm::distance(possible_position, target);
+
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    next_move = possible_position;
                 }
             }
             calc_direction(position, next_move);

@@ -235,12 +235,12 @@ int main()
 
         Rect playerRect = player.getPlayerRect();
 
-        bool playerHit =
-            red_ghost.checkCollision(playerRect) ||
-            pink_ghost.checkCollision(playerRect) ||
-            cyan_ghost.checkCollision(playerRect) ||
-            orange_ghost.checkCollision(playerRect);
+        bool red_collision = red_ghost.checkCollision(playerRect);
+        bool pink_collision = pink_ghost.checkCollision(playerRect);
+        bool cyan_collision = cyan_ghost.checkCollision(playerRect);
+        bool orange = orange_ghost.checkCollision(playerRect);
 
+        /*
         if (playerHit && currentFrame >= invulnerableUntil)
         {
             gameState.loseLife();
@@ -251,6 +251,90 @@ int main()
             if (!gameState.isGameOver())
             {
                 player.setPosition(pacmanStart);
+            }
+        }*/
+
+        if (red_collision)
+        {
+            State redState = red_ghost.get_state();
+
+            if (redState == State::Scared)
+            {
+                red_ghost.set_state_dead();
+                player.killGhost();
+            }
+            else if (redState != State::Dead && currentFrame >= invulnerableUntil)
+            {
+                gameState.loseLife();
+                invulnerableUntil = currentFrame + 1.5f;
+
+                if (!gameState.isGameOver())
+                {
+                    player.setPosition(pacmanStart);
+                }
+            }
+        }
+
+        if (pink_collision)
+        {
+            State pinkState = pink_ghost.get_state();
+
+            if (pinkState == State::Scared)
+            {
+                pink_ghost.set_state_dead();
+                player.killGhost();
+            }
+            else if (pinkState != State::Dead && currentFrame >= invulnerableUntil)
+            {
+                gameState.loseLife();
+                invulnerableUntil = currentFrame + 1.5f;
+
+                if (!gameState.isGameOver())
+                {
+                    player.setPosition(pacmanStart);
+                }
+            }
+        }
+
+        if (cyan_collision)
+        {
+            State cyanState = cyan_ghost.get_state();
+
+            if (cyanState == State::Scared)
+            {
+                cyan_ghost.set_state_dead();
+                player.killGhost();
+            }
+            else if (cyanState != State::Dead && currentFrame >= invulnerableUntil)
+            {
+                gameState.loseLife();
+                invulnerableUntil = currentFrame + 1.5f;
+
+                if (!gameState.isGameOver())
+                {
+                    player.setPosition(pacmanStart);
+                }
+            }
+        }
+
+        if (orange)
+        {
+            State orangeState = orange_ghost.get_state();
+
+            if (orangeState == State::Scared)
+            {
+                orange_ghost.set_state_dead();
+                player.killGhost();
+            }
+            else if (orangeState != State::Dead && currentFrame >= invulnerableUntil)
+            {
+                gameState.loseLife();
+                invulnerableUntil = currentFrame + 1.5f;
+
+                if (!gameState.isGameOver())
+                {
+                    player.setPosition(pacmanStart);
+                }
             }
         }
 

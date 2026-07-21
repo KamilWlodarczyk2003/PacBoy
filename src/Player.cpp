@@ -170,3 +170,15 @@ void Player::setCollided(bool collidedValue)
 {
     collided = collidedValue;
 }
+
+void Player::killGhost()
+{
+    static constexpr int ghostScores[] = {200, 400, 800, 1600};
+
+    gameState->addScore(ghostScores[multiplier]);
+
+    if(multiplier < 3)
+    {
+        multiplier++;
+    }
+}
