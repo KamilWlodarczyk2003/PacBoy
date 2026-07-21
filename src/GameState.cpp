@@ -22,3 +22,13 @@ void GameState::nextLevel()
 {
     level++;
 }
+
+void GameState::collectPellet()
+{
+    pelletsCount--;
+}
+
+void GameState::collectEnergizer()
+{
+    energizerCount--;
+}

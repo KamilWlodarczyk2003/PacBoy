@@ -26,6 +26,8 @@ public:
     void collectTile(int x, int y);
     int getWidth() const;
     int getHeight() const;
+    int getInitEnergizerCount() const { return initEnergizerCount; }
+    int getInitPelletCount() const { return initPelletCount; }
     glm::vec2 getPacmanStartPosition() const;
     glm::vec2 getGhostSpawnPosition() const;
     glm::vec2 getGhostEntryPosition() const {return ghostEntrancePos;}
@@ -35,6 +37,8 @@ private:
     std::vector<Tile> tiles;
     int width;
     int height;
+    int initPelletCount{0};
+    int initEnergizerCount{0};
     glm::vec2 pacmanStartPos;
     glm::vec2 ghostStartPos;
     glm::vec2 ghostEntrancePos;

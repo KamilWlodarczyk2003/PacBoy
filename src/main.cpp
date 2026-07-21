@@ -160,6 +160,8 @@ int main()
 
     // Create GameState
     GameState gameState;
+    gameState.setPelletCount(gameGrid.getInitPelletCount());
+    gameState.setEnergizerCount(gameGrid.getInitEnergizerCount());
 
     // Create Hud
     Hud hud(SCR_WIDTH, SCR_HEIGHT);

@@ -45,8 +45,8 @@ bool Grid::loadFromFile(const std::string& path)
             Tile t = Tile::Empty;
             switch(c) {
                 case '#': t=Tile::Wall; break;
-                case '.': t=Tile::Pellet; break;
-                case '*': t=Tile::Energizer; break;
+                case '.': t=Tile::Pellet; initPelletCount++; break;
+                case '*': t=Tile::Energizer; initEnergizerCount++; break;
                 case 'P': t=Tile::PacmanStart; pacmanStartPos={x,y}; break;
                 case 'G': t=Tile::GhostStart; ghostStartPos={x,y}; break;
                 case 'E': t=Tile::GhostSpawnExit; ghostExitPos={x,y}; break;

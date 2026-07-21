@@ -40,11 +40,13 @@ bool Player::collectPellet(int x, int y, Grid& grid)
     {
         gameState->addScore(10);
         grid.collectTile(x,y);
+        gameState->collectPellet();
         return true;
     } else if(tile == Tile::Energizer)
     {
         gameState->addScore(50);
         grid.collectTile(x,y);
+        gameState->collectEnergizer();
         setEnergizerTrue();
         return true;
     }
